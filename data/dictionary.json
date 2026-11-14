@@ -1,0 +1,34 @@
+{
+ "emotions":[
+  {"id":"hurt","name":"서운함","level":"P","test":"당신이 먼저인데 내가 놓쳤어, 미안해"},
+  {"id":"anxious","name":"불안","level":"P","test":"걱정되게 했다면 미안해, 다 알려 줄게"},
+  {"id":"lonely","name":"외로움","level":"P","test":"같이 있는 시간을 더 만들게"},
+  {"id":"shame","name":"수치심","level":"P","test":"당신을 깎아내릴 뜻은 아니었어, 존중해"},
+  {"id":"pride","name":"자존심 상함","level":"P","test":"당신 생각을 먼저 물었어야 했는데"},
+  {"id":"unfair","name":"억울함","level":"P","test":"당신이 많이 참았다는 거 알아, 내가 더 맡을게"},
+  {"id":"powerless","name":"무력감","level":"P","test":"당신 의견이 결정에 실제로 영향을 줄 거야"},
+  {"id":"anger","name":"화","level":"S"},
+  {"id":"irritation","name":"짜증","level":"S"}
+ ],
+ "needs":[
+  {"id":"respect","name":"존중"},{"id":"recog","name":"인정"},{"id":"trust","name":"안전·신뢰"},
+  {"id":"fair","name":"공정"},{"id":"belong","name":"소속"}
+ ],
+ "meanings":[
+  {"id":"m1","text":"내가 안중에 없는 것 같아","line":"내가 안중에 없는 것 같았거든.","emo":["hurt","lonely"],"need":"respect"},
+  {"id":"m2","text":"나와 가족보다 다른 게 우선인 것 같아","line":"가족보다 다른 게 먼저인 것 같았거든.","emo":["hurt"],"need":"belong"},
+  {"id":"m3","text":"내가 모르는 무언가가 있는 건 아닐까","line":"내가 모르는 게 있는 건 아닐까 싶었거든.","emo":["anxious"],"need":"trust"},
+  {"id":"m4","text":"내 마음은 고려되지 않는 것 같아","line":"내 마음은 고려되지 않는 것 같았거든.","emo":["hurt","powerless"],"need":"respect"},
+  {"id":"m5","text":"나만 참고 있는 것 같아","line":"나만 참고 있는 것 같았거든.","emo":["unfair"],"need":"fair"},
+  {"id":"m6","text":"무시당한 것 같아","line":"무시당한 것 같았거든.","emo":["shame","pride"],"need":"recog"},
+  {"id":"m7","text":"내가 틀렸다고 하는 것 같아","line":"내가 틀렸다고 하는 것처럼 들렸거든.","emo":["pride"],"need":"recog"},
+  {"id":"m8","text":"혼자 남겨진 것 같아","line":"혼자 남겨진 것 같았거든.","emo":["lonely"],"need":"belong"}
+ ],
+ "behaviors":[
+  {"id":"b1","name":"반대하거나 못 하게 했어요","said":"반대부터 해서","group":"A"},
+  {"id":"b2","name":"날카롭게 말했어요","said":"날카롭게 말해서","group":"A"},
+  {"id":"b3","name":"변명하거나 방어했어요","said":"방어부터 해서","group":"D"},
+  {"id":"b4","name":"알아서 하라며 물러났어요","said":"알아서 하라고 말해서","group":"W"},
+  {"id":"b5","name":"말없이 입을 닫았어요","said":"말없이 입을 닫아서","group":"W"}
+ ]
+}
