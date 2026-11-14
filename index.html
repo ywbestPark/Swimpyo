@@ -1,0 +1,125 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2f4f7f"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
+<title>결혼 쉼표</title>
+<style>
+:root{--bg:#eef2f5;--card:#fff;--fg:#1e2733;--mut:#5d6b7a;--ac:#2f4f7f;--acfg:#fff;--soft:#dfe8f2;--ln:#cfd9e3;--warn:#8a4b12;--wbg:#fbeedd}
+@media(prefers-color-scheme:dark){:root{--bg:#12171d;--card:#1b222b;--fg:#e6ecf2;--mut:#9aa8b6;--ac:#8fb4e8;--acfg:#101820;--soft:#26303c;--ln:#2f3b48;--warn:#f0c48a;--wbg:#3a2d1c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:540px;margin:0 auto;padding:18px 16px 48px}
+.top{display:flex;align-items:baseline;gap:2px;margin-bottom:14px}
+.top b{font:700 44px/1 Georgia,serif;color:var(--ac)}.top span{font-weight:700;letter-spacing:-.02em}
+h2{font-size:21px;line-height:1.35;margin:6px 0 4px;letter-spacing:-.02em}
+p{margin:6px 0}.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:14px;margin:12px 0}
+.opt,.chip{font:inherit;color:var(--fg);background:var(--card);border:1.5px solid var(--ln);border-radius:12px;cursor:pointer;text-align:left}
+.opt{display:block;width:100%;padding:11px 13px;margin:7px 0}
+.chip{padding:8px 13px;margin:4px 4px 4px 0;display:inline-block}
+.on{border-color:var(--ac);background:var(--soft);font-weight:600}
+.btn{font:inherit;font-weight:600;background:var(--ac);color:var(--acfg);border:0;border-radius:12px;padding:12px 18px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ac);border:1.5px solid var(--ln)}
+.row{display:flex;gap:10px;margin-top:16px}.row .btn{flex:1}
+textarea,input{font:inherit;width:100%;color:var(--fg);background:var(--card);border:1.5px solid var(--ln);border-radius:12px;padding:10px 12px;margin:4px 0 10px}
+textarea{min-height:110px}
+label{font-size:14px;color:var(--mut)}
+.warn{background:var(--wbg);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:14px;margin:8px 0}.warn:empty{display:none}
+.sol b{display:block}.sol small{display:block;color:var(--mut)}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+</style></head><body><main>
+<div class="top"><b>,</b><span>결혼 쉼표</span></div><div id="app">불러오는 중…</div>
+<p class="mut" style="margin-top:28px">이 앱은 상담·치료를 대신하지 않아요. 이 정리는 가설이고, 맞는지는 당신이 정해요.</p>
+</main>
+<script>
+const A=document.getElementById('app'),$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let D,SO,SE,st=fresh();
+function fresh(){return{step:0,fact:'',event:'',first:[],mean:[],words:'',test:null,main:null,beh:[],ok:null,partner:'',cl:'ask',f:{},text:'',edited:false,note:''}}
+const E=id=>D.emotions.find(x=>x.id===id),M=id=>D.meanings.find(x=>x.id===id),B=id=>D.behaviors.find(x=>x.id===id);
+const chip=(a,v,on,t,c='chip')=>`<button class="${c}${on?' on':''}" data-a="${a}" data-v="${v}">${esc(t)}</button>`;
+const nav=(s,next='다음')=>`<div class="row"><button class="btn ghost" data-a="go" data-n="${s-1}">이전</button><button class="btn" data-a="go" data-n="${s+1}">${next}</button></div>`;
+function cands(){const ids=[];st.mean.forEach(m=>M(m).emo.forEach(e=>ids.includes(e)||ids.push(e)));
+ st.first.forEach(e=>E(e).level==='P'&&!ids.includes(e)&&ids.push(e));
+ if(!ids.length)ids.push('hurt','anxious','lonely');return ids.slice(0,4)}
+const mainE=()=>st.test&&st.test!=='none'?st.test:cands()[0];
+const co=()=>cands().filter(x=>x!==st.main).slice(0,2);
+function recs(){const sc={},add=(id,w)=>sc[id]=(sc[id]||0)+w;
+ (SO.rules.emotion[st.main]||[]).forEach((id,i)=>add(id,3-i));
+ co().forEach(c=>(SO.rules.emotion[c]||[]).forEach(id=>add(id,1)));
+ st.beh.forEach(b=>(SO.rules.group[B(b).group]||[]).forEach(id=>add(id,2)));
+ return Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>SO.solutions.find(s=>s.id===id))}
+function build(){const f=st.f,d=SE.d,ev=st.event||'그 이야기',m=E(st.main);
+ const ap=st.beh.length?SE.apology.replace('{event}',ev).replace('{said}',B(st.beh[0]).said):SE.apology_fb.replace('{event}',ev);
+ const em=SE.emotion.replace('{emotion}',m.name).replace('{line}',st.mean.slice(0,2).map(i=>M(i).line).join(' ')).trim();
+ const ack=st.partner?SE.ack.replace('{partner}',st.partner):'';
+ const cl=st.cl==='ask'?SE.ask.replace('{wish}',f.wish||d.wish).replace('{alt}',f.alt||d.alt)
+  :st.cl==='release'?SE.release.replace('{release}',f.release||d.release).replace('{req}',f.req||d.req):SE.entrust;
+ return[ap,em,ack,cl].filter(Boolean).join(' ')}
+function warn(){const b=SE.banned.filter(x=>st.text.includes(x.p));
+ $('#warn').innerHTML=b.map(x=>`'${esc(x.p)}' 표현은 ${esc(x.why)} → ${esc(x.alt)}`).join('<br>')}
+function go(n){if(n<6){st.main=null;st.ok=null}
+ if(n===6&&!st.main)st.main=mainE();
+ if(n===7&&!st.edited)st.text=build();
+ st.step=n;render();scrollTo(0,0)}
+function render(){let h='';const s=st.step;
+ if(s===0)h=`<h2>싸운 일을 천천히 들여다봐요</h2><p>무슨 감정이 진짜였는지 찾고, 그 마음을 상대에게 전할 말로 바꿔 봐요.</p>
+  <div class="card"><b>먼저 안전 확인</b><p>싸움 중 두려움을 느꼈거나, 폭력·협박·통제가 있었나요?</p>
+  <div class="row"><button class="btn" data-a="go" data-n="1">아니요</button><button class="btn ghost" data-a="go" data-n="99">네, 있었어요</button></div></div>`;
+ if(s===99)h=`<h2>안전이 먼저예요</h2><div class="card"><p>지금 위험하다면 112에 바로 연락하세요. 가정폭력 상담은 여성긴급전화 1366에서 받을 수 있어요.</p><p class="mut">이 앱의 정리 과정은 안전이 확보된 뒤에 써 주세요.</p></div><button class="btn ghost" data-a="go" data-n="0">처음으로</button>`;
+ if(s===1)h=`<h2>무슨 일이 있었나요?</h2><p class="mut">사실만 적어요. 해석은 뒤에서 해요.</p>
+  <label>한 줄 이름 (상대에게 말할 때 써요)</label><input data-k="event" value="${esc(st.event)}" placeholder="예: 워크숍 이야기">
+  <label>있었던 일</label><textarea data-k="fact" placeholder="누가, 언제, 무슨 말을 했는지">${esc(st.fact)}</textarea>${nav(1)}`;
+ if(s===2)h=`<h2>그 순간 먼저 올라온 감정은?</h2><p class="mut">최대 3개. 화·짜증은 그 아래에 다른 감정이 숨어 있는 경우가 많아요.</p>
+  ${D.emotions.map(e=>chip('first',e.id,st.first.includes(e.id),e.name)).join('')}${nav(2)}`;
+ if(s===3)h=`<h2>그 말·행동이 나에게 어떤 뜻으로 느껴졌나요?</h2><p class="mut">최대 3개. 맞는 게 없으면 아래에 적어요.</p>
+  ${D.meanings.map(m=>chip('mean',m.id,st.mean.includes(m.id),m.text,'opt')).join('')}
+  <label>머릿속에 처음 스친 문장 (선택)</label><input data-k="words" value="${esc(st.words)}">${nav(3)}`;
+ if(s===4)h=`<h2>상대가 어떤 말을 해 줬다면 마음이 가장 크게 풀렸을까요?</h2><p class="mut">하나만 골라요. 풀리는 말에 따라 진짜 감정이 갈려요.</p>
+  ${cands().map(id=>chip('test',id,st.test===id,'“'+E(id).test+'”','opt')).join('')}
+  ${chip('test','none',st.test==='none','어떤 말에도 크게 안 풀려요','opt')}${nav(4)}`;
+ if(s===5)h=`<h2>그때 나는 어떻게 했나요?</h2><p class="mut">최대 3개. 감정과 행동은 따로 봐요.</p>
+  ${D.behaviors.map(b=>chip('beh',b.id,st.beh.includes(b.id),b.name,'opt')).join('')}${nav(5,'결과 보기')}`;
+ if(s===6){const m=E(st.main),needs=[...new Set(st.mean.map(i=>D.needs.find(n=>n.id===M(i).need).name))];
+  const fp=st.first.filter(x=>E(x).level==='P'&&x!==st.main).map(x=>E(x).name);
+  const note=(st.first.some(x=>E(x).level==='S')?'화·짜증은 아래 감정을 가리는 경우가 많아요. ':'')+(st.test&&st.test!=='none'&&fp.length?`처음엔 ${fp.join('·')}이 먼저였지만, 말 한마디 테스트에서는 ${m.name} 쪽이 더 컸어요.`:'');
+  h=`<h2>이렇게 정리해 봤어요</h2><div class="card"><p><b>주된 감정(가설)</b> ${esc(m.name)}</p>
+  ${co().length?`<p><b>함께 있을 수 있는 감정</b> ${co().map(x=>esc(E(x).name)).join(', ')}</p>`:''}
+  ${needs.length?`<p><b>건드려진 마음</b> ${needs.map(esc).join(', ')}</p>`:''}
+  ${st.beh.length?`<p><b>내 행동</b> ${st.beh.map(b=>esc(B(b).name)).join(', ')}</p>`:''}
+  ${note?`<p class="mut">${esc(note)}</p>`:''}</div>
+  <p>이 정리가 맞나요?</p>${chip('ok','yes',st.ok==='yes','맞아요')}${chip('ok','no',st.ok==='no','조금 달라요')}
+  ${st.ok==='no'?`<p class="mut">가장 가까운 감정을 골라 주세요.</p>${D.emotions.filter(e=>e.level==='P').map(e=>chip('main',e.id,st.main===e.id,e.name)).join('')}`:''}
+  <h2 style="margin-top:20px">이런 해결책이 어울려요</h2>
+  ${recs().map(r=>`<div class="card sol"><b>${esc(r.name)}</b>${esc(r.desc)}<small>👍 ${esc(r.pros)}</small><small>⚠ ${esc(r.cons)}</small></div>`).join('')}
+  ${nav(6,'전할 말 만들기')}`}
+ if(s===7){const f=st.f,F=(k,l,p)=>`<label>${l}</label><input data-k="${k}" value="${esc(f[k]||'')}" placeholder="${p}">`;
+  h=`<h2>배우자에게 전할 말</h2><p class="mut">끝맺음을 고르고, 내 말투로 고쳐 쓰세요.</p>
+  ${chip('cl','ask',st.cl==='ask','그래도 아쉬워')}${chip('cl','release',st.cl==='release','기분 좋게 보내기')}${chip('cl','entrust',st.cl==='entrust','선택은 당신 몫')}
+  <div style="margin-top:10px"><label>상대 사정, 짐작하는 대로 (선택)</label><input data-k="partner" value="${esc(st.partner)}" placeholder="예: 당신이 팀장이라 쉽지 않다">
+  ${st.cl==='ask'?F('wish','내 바람','예: 안 갔으면 하는 마음이야')+F('alt','같이 찾아볼 것','예: 당일로 줄일 수 있는지'):''}
+  ${st.cl==='release'?F('release','응원 한마디','예: 기분 좋게 다녀와.')+F('req','대신 부탁','예: 다녀와서 우리 가족끼리 시간 보내자'):''}</div>
+  <textarea id="txt" data-k="text" style="min-height:190px">${esc(st.text)}</textarea><div id="warn" class="warn"></div>
+  <div class="row"><button class="btn ghost" data-a="go" data-n="6">이전</button><button class="btn" data-a="copy">복사하기</button></div>
+  <p id="msg" class="mut"></p>`}
+ A.innerHTML=h;if(s===7)warn()}
+function tog(arr,v,max){const i=arr.indexOf(v);i>=0?arr.splice(i,1):arr.length<max&&arr.push(v)}
+A.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,v=t.dataset.v;
+ if(a==='go')return go(+t.dataset.n);
+ if(a==='copy')return copy();
+ if(a==='first')tog(st.first,v,3);if(a==='mean')tog(st.mean,v,3);if(a==='beh')tog(st.beh,v,3);
+ if(a==='test')st.test=v;if(a==='ok')st.ok=v;
+ if(a==='main'){st.main=v;st.edited=false}
+ if(a==='cl'){st.cl=v;st.edited=false;st.text=build()}
+ render()});
+A.addEventListener('input',e=>{const t=e.target,k=t.dataset.k;if(!k)return;
+ if(k==='text'){st.text=t.value;st.edited=true;return warn()}
+ if(['fact','event','words','partner'].includes(k))st[k]=t.value;else st.f[k]=t.value;
+ if(st.step===7&&!st.edited){st.text=build();$('#txt').value=st.text;warn()}});
+async function copy(){try{await navigator.clipboard.writeText(st.text)}catch{$('#txt').select();document.execCommand('copy')}
+ try{const h=JSON.parse(localStorage.getItem('swimpyo.history')||'[]');
+  h.push({at:new Date().toISOString(),event:st.event,main:st.main,beh:st.beh,cl:st.cl});localStorage.setItem('swimpyo.history',JSON.stringify(h))}catch{}
+ $('#msg').textContent='복사했어요. 직접 말하기 어려우면 문자로 시작해도 좋아요.'}
+Promise.all(['dictionary','solutions','sentences'].map(n=>fetch(`data/${n}.json`).then(r=>r.json()))).then(([a,b,c])=>{D=a;SO=b;SE=c;render()})
+ .catch(()=>A.textContent='데이터를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>

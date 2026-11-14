@@ -1,0 +1,3 @@
+{"name":"결혼 쉼표","short_name":"쉼표","start_url":"./","scope":"./","display":"standalone",
+ "background_color":"#eef2f5","theme_color":"#2f4f7f",
+ "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
